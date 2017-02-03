@@ -50,13 +50,13 @@ resources:
 - name: gcp-concourse
   type: git
   source:
-    uri: https://github.com/c0-ops/gcp-concourse.git
+    uri: {{gitrepo-gcp}}
     branch: master
 
 - name: ert-concourse
   type: git
   source:
-    uri: https://github.com/c0-ops/ert-concourse.git
+    uri: {{gitrepo-ert}}
     branch: master
 
 - name: tool-om
