@@ -4,10 +4,10 @@ set -e
 
 if [ $arg_wipe == "stop" ];
         then
-                echo "Wiping Environment...."
+                echo "Stopping Environment...."
         else
-                echo "Need Args [0]=wipe, anything else and I swear I'll exit and do nothing!!! "
-                echo "Example: ./wipe-env.sh wipe ..."
+                echo "Need Args [0]=stop, anything else and I swear I'll exit and do nothing!!! "
+                echo "Example: ./stop-env.sh stop ..."
                 exit 0
 fi
 
