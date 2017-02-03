@@ -32,6 +32,7 @@ for y in ${ZONE[@]}; do
   for i in $(eval $BOSH_INSTANCE_CMD);do
     echo "Starting Instance:$i ..."
     gcloud compute instances start $i --zone $y
+	done
 
   echo "----------------------------------------------------------------------------------------------"
   echo "Start or Non Existant bosh instance(s)...."

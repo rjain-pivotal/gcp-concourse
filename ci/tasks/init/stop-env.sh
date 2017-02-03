@@ -39,7 +39,46 @@ for y in ${ZONE[@]}; do
 	echo "----------------------------------------------------------------------------------------------"
   echo "Looking for bosh instance(s) first ...."
   echo "----------------------------------------------------------------------------------------------"
+  BOSH_INSTANCE_CMD="gcloud compute instances list --flatten tags.items[] --format json | jq '.[] | select ((.tags.items == \"$gcp_terraform_prefix\" ) and (.metadata.items[].value == \"bosh\" and .metadata.items[].key == \"job\" )) | .name' | tr -d '\"' | sort -u"
+  for i in $(eval $BOSH_INSTANCE_CMD);do
+    echo "Stopping Instance:$i ..."
+    echo gcloud compute instances stop $i --zone $y
+  done
 
+  echo "----------------------------------------------------------------------------------------------"
+  echo "Removed or Non Existant bosh instance(s)...."
+  echo "----------------------------------------------------------------------------------------------"
+
+  MY_CMD="gcloud compute instances list --flatten tags.items[] --format json | jq '.[] | select ((.tags.items == \"$gcp_terraform_prefix\" ) and (.zone == \"$y\")) | .name' | tr -d '\"'"
+  echo $MY_CMD
+  gcp_instances=""
+  for i in $(eval $MY_CMD); do
+  	 gcp_instances="$gcp_instances $i"
+  done
+
+  if [ -n "$gcp_instances" ]; then
+      echo "|||Stopping Tagged Instances:$gcp_instances"
+      echo "|||from zone $y ..."
+      echo gcloud compute instances stop $gcp_instances --zone $y
+  fi
+
+  MY_CMD="gcloud compute instances list | grep $gcp_terraform_prefix | grep $y | awk '{print\$1}'"
+  echo $MY_CMD
+  gcp_instances=""
+  for i in $(eval $MY_CMD); do
+     gcp_instances="$gcp_instances $i"
+  done
+
+  if [ -n "$gcp_instances" ]; then
+      echo "|||Stopping Matching Prefix Instances:$gcp_instances"
+      echo "|||from zone $y ..."
+      echo gcloud compute instances stop $gcp_instances --zone $y
+  fi
+
+
+	echo "=============================================================================================="
+  echo "All compute/instances with the prefix or tag:$gcp_terraform_prefix in zone=$y have been stopped !!!"
+	echo "=============================================================================================="
 done
 
 #################### Stop End   ##########################
