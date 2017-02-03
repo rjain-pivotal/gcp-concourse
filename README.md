@@ -51,3 +51,6 @@ opsman.gcp-poc.customer0.net == 104.154.98.48
 ```
 
 **[DEPLOY]**. **AFTER!!!** Completing Step 7 above ... Run the **`deploy-iaas`** job manually, if valid values were passed, a successful ERT deployment on GCP will be the result.
+
+####
+Added Stop and Start Scripts
