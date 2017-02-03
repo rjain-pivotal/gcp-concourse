@@ -1,2 +1,7 @@
 *.DS_Store
 /params
+commands.txt
+*params.yml
+
+
+ci/c0-gcp-concourse-poc-params.yml

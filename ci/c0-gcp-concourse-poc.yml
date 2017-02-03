@@ -29,7 +29,13 @@ groups:
   - configure-ert
   - deploy-ert
 
+- name: stop
+  jobs:
+  - stop-env
 
+- name: start
+  jobs:
+  - start-env
 resource_types:
 
 - name: pivnet
@@ -144,6 +150,95 @@ jobs:
         gcp_terraform_prefix: {{gcp_terraform_prefix}}
         pcf_ert_domain: {{pcf_ert_domain}}
 
+#####################
+## Job - Start Env  ##
+#####################
+- name: start-env
+  serial: true
+  max_in_flight: 1
+  serial_groups: [full]
+  plan:
+  - aggregate:
+    - get: gcp-concourse
+      trigger: false
+    - get: pivnet-elastic-runtime
+      trigger: false
+      params:
+        globs:
+        - "*pivotal"
+    - get: pivnet-opsmgr
+      trigger: false
+      params:
+        globs:
+        - "*GCP*"
+
+  - task: start-env
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: virtmerlin/c0-worker-gcp
+      inputs:
+        - name: gcp-concourse
+      outputs:
+        - name: opsman-metadata
+      run:
+        path: gcp-concourse/ci/tasks/init/start-env.sh
+      params:
+        arg_wipe: {{arg_wipe}}
+        gcp_proj_id: {{gcp_proj_id}}
+        gcp_region: {{gcp_region}}
+        gcp_zone_1: {{gcp_zone_1}}
+        gcp_zone_2: {{gcp_zone_2}}
+        gcp_zone_3: {{gcp_zone_3}}
+        gcp_svc_acct_key: {{gcp_svc_acct_key}}
+        gcp_terraform_prefix: {{gcp_terraform_prefix}}
+
+#####################
+## Job - Stop Env  ##
+#####################
+- name: stop-env
+  serial: true
+  max_in_flight: 1
+  serial_groups: [full]
+  plan:
+  - aggregate:
+    - get: gcp-concourse
+      trigger: false
+    - get: pivnet-elastic-runtime
+      trigger: false
+      params:
+        globs:
+        - "*pivotal"
+    - get: pivnet-opsmgr
+      trigger: false
+      params:
+        globs:
+        - "*GCP*"
+
+  - task: stop-env
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: virtmerlin/c0-worker-gcp
+      inputs:
+        - name: gcp-concourse
+      outputs:
+        - name: opsman-metadata
+      run:
+        path: gcp-concourse/ci/tasks/init/stop-env.sh
+      params:
+        arg_wipe: {{arg_wipe}}
+        gcp_proj_id: {{gcp_proj_id}}
+        gcp_region: {{gcp_region}}
+        gcp_zone_1: {{gcp_zone_1}}
+        gcp_zone_2: {{gcp_zone_2}}
+        gcp_zone_3: {{gcp_zone_3}}
+        gcp_svc_acct_key: {{gcp_svc_acct_key}}
+        gcp_terraform_prefix: {{gcp_terraform_prefix}}
 
 #######################
 ## Job - Deploy-Iaas ##
