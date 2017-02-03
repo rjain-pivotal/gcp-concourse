@@ -42,7 +42,7 @@ for y in ${ZONE[@]}; do
   BOSH_INSTANCE_CMD="gcloud compute instances list --flatten tags.items[] --format json | jq '.[] | select ((.tags.items == \"$gcp_terraform_prefix\" ) and (.metadata.items[].value == \"bosh\" and .metadata.items[].key == \"job\" )) | .name' | tr -d '\"' | sort -u"
   for i in $(eval $BOSH_INSTANCE_CMD);do
     echo "Stopping Instance:$i ..."
-    echo gcloud compute instances stop $i --zone $y
+    gcloud compute instances stop $i --zone $y
   done
 
   echo "----------------------------------------------------------------------------------------------"
@@ -59,7 +59,7 @@ for y in ${ZONE[@]}; do
   if [ -n "$gcp_instances" ]; then
       echo "|||Stopping Tagged Instances:$gcp_instances"
       echo "|||from zone $y ..."
-      echo gcloud compute instances stop $gcp_instances --zone $y
+      gcloud compute instances stop $gcp_instances --zone $y
   fi
 
   MY_CMD="gcloud compute instances list | grep $gcp_terraform_prefix | grep $y | awk '{print\$1}'"
@@ -72,7 +72,7 @@ for y in ${ZONE[@]}; do
   if [ -n "$gcp_instances" ]; then
       echo "|||Stopping Matching Prefix Instances:$gcp_instances"
       echo "|||from zone $y ..."
-      echo gcloud compute instances stop $gcp_instances --zone $y
+      gcloud compute instances stop $gcp_instances --zone $y
   fi
 
 
